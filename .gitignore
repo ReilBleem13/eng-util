@@ -1,0 +1,59 @@
+# --- Go ---
+/bin/
+/build/
+/dist/
+/out/
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Temporary files
+*.test
+*.tmp
+
+# Go workspace
+go.work
+go.work.sum
+
+# Dependency directories (older GOPATH setups)
+pkg/
+
+# Coverage
+*.cover
+*.coverprofile
+
+# --- Modules / Cache ---
+/vendor/
+/.cache/
+**/.cache/
+
+# --- Environment ---
+.env
+
+# --- Editors / IDE ---
+# VS Code
+.vscode/
+.history/
+
+# JetBrains (GoLand)
+.idea/
+*.iml
+
+# Sublime
+*.sublime-workspace
+*.sublime-project
+
+# --- OS-level files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+
+# --- Docker / Compose ---
+/docker-data/
+/docker-volumes/
