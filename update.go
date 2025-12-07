@@ -26,6 +26,21 @@ func (m *model) refreshListFromQueue() {
 	m.list.SetItems(listItems)
 }
 
+func (m *model) saveWords() {
+	items := make([]*priority.Item, len(m.queue.PQ))
+	copy(items, m.queue.PQ)
+
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].Priority > items[j].Priority
+	})
+
+	words := make([]domain.Item, len(items))
+	for i, it := range items {
+		words[i] = *it.Data
+	}
+	m.words.ReWriteFile(words)
+}
+
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
@@ -43,6 +58,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		if key == "q" || key == "ctrl+c" {
 			m.quiiting = true
+			m.saveWords()
 			return m, tea.Quit
 		}
 
