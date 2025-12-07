@@ -91,7 +91,7 @@ func parseFile(file *os.File) ([]domain.Item, error) {
 
 		if strings.HasSuffix(data, " -") {
 			newItem := domain.Item{}
-			newItem.Word = strings.TrimSuffix(data, "-")
+			newItem.Word = strings.TrimSpace(strings.TrimSuffix(data, "-"))
 
 			if !scanner.Scan() {
 				return nil, fmt.Errorf("word '%s' does not contain translation (unexpected EOF)", newItem.Word)

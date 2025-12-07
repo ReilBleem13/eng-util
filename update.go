@@ -145,10 +145,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				_, correct := m.words.IsTranslationCorrect(m.inputResult, m.choice.Translation)
 				if !correct {
 					m.queue.Increase(m.choice.Word)
-					m.wrongAnswers = append(m.wrongAnswers, domain.Item{
-						Word:        m.choice.Word,
-						Translation: m.choice.Translation,
-					})
+					flag := false
+					for _, v := range m.wrongAnswers {
+						if v.Word == m.choice.Word {
+							flag = true
+							break
+						}
+					}
+					if !flag {
+						m.wrongAnswers = append(m.wrongAnswers, domain.Item{
+							Word:        m.choice.Word,
+							Translation: m.choice.Translation,
+						})
+					}
 				} else {
 					m.queue.Decrease(m.choice.Word)
 				}

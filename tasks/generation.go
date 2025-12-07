@@ -37,11 +37,16 @@ const (
 	generateSentencePrompt string = `Generate a single English sentence (at least 5 words) using the word "%s". 
 		Return only the sentence, no extra text.`
 
-	generateDescribePrompt string = `Проанализируй качество перевода с английского языка на русский. 
-		Укажи на ошибки, если они есть и приведи варианты правильного перевода.
-		Исходное предложение [%s].
-		Мой перевод [%s].
-		Дай краткий ответ!`
+	generateDescribePrompt string = `
+		Входные данные:
+		Оригинал на английском: [%s]
+		Мой перевод на русский: [%s]
+
+		Выходные данные:
+		Мой перевод на русском.
+		2-3 примера правильного перевода (НА РУССКОМ).
+		Ответ в формате raw, без заголовков и тд
+	`
 )
 
 func (g *Generation) GenerateSentenceTask(client *http.Client, input *domain.SentenceGenerationInput) (*domain.SentenceGenerationOutput, error) {
