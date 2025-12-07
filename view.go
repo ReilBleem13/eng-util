@@ -10,7 +10,7 @@ func (m model) View() string {
 
 		if len(m.wrongAnswers) != 0 {
 			var res strings.Builder
-			res.WriteString("\nСписок слов в которых были допущенны ошибки.\n\n")
+			res.WriteString("\nСписок слов в которых были допущены ошибки.\n\n")
 
 			i := 1
 			for _, ans := range m.wrongAnswers {

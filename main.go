@@ -2,6 +2,7 @@ package main
 
 import (
 	"english-util/domain"
+	"english-util/priority"
 	"english-util/tasks"
 	"english-util/words"
 	"fmt"
@@ -20,6 +21,7 @@ import (
 type model struct {
 	list              list.Model
 	textInput         textinput.Model
+	queue             *priority.WordQueue
 	choice            *domain.Item
 	wrongAnswers      []domain.Item
 	showInput         bool
@@ -50,7 +52,7 @@ type describeGeneratedMsg struct {
 	err    error
 }
 
-func initialModel(l list.Model, wordsClient *words.Words, tasksClient *tasks.Generation) model {
+func initialModel(l list.Model, wq *priority.WordQueue, wordsClient *words.Words, tasksClient *tasks.Generation) model {
 	sp := spinner.New()
 	sp.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("212"))
 
@@ -61,6 +63,7 @@ func initialModel(l list.Model, wordsClient *words.Words, tasksClient *tasks.Gen
 
 	return model{
 		list:           l,
+		queue:          wq,
 		textInput:      ti,
 		wrongAnswers:   []domain.Item{},
 		showInput:      false,
@@ -92,13 +95,14 @@ func main() {
 	tasksClient := tasks.NewGeneration(os.Getenv("MODEL"), os.Getenv("MODEL_PORT"))
 
 	selectedWords := wordsClient.TakeWords()
-	items := []list.Item{}
+	queue := priority.BuildQueue(selectedWords)
 
-	for _, word := range selectedWords {
-		items = append(items, word)
+	items := make([]list.Item, len(queue.PQ))
+	for i, it := range queue.PQ {
+		items[i] = *it.Data
 	}
 
-	m := initialModel(*domain.NewList(items), wordsClient, tasksClient)
+	m := initialModel(*domain.NewList(items), queue, wordsClient, tasksClient)
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {
 		fmt.Println("Error running program:", err)

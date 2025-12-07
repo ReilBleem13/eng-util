@@ -2,10 +2,29 @@ package main
 
 import (
 	"english-util/domain"
+	"english-util/priority"
+	"sort"
 
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+func (m *model) refreshListFromQueue() {
+	items := make([]*priority.Item, len(m.queue.PQ))
+	copy(items, m.queue.PQ)
+
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].Priority > items[j].Priority
+	})
+
+	listItems := make([]list.Item, len(items))
+	for i, it := range items {
+		listItems[i] = *it.Data
+	}
+
+	m.list.SetItems(listItems)
+}
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmd tea.Cmd
@@ -109,11 +128,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 				_, correct := m.words.IsTranslationCorrect(m.inputResult, m.choice.Translation)
 				if !correct {
+					m.queue.Increase(m.choice.Word)
 					m.wrongAnswers = append(m.wrongAnswers, domain.Item{
 						Word:        m.choice.Word,
 						Translation: m.choice.Translation,
 					})
+				} else {
+					m.queue.Decrease(m.choice.Word)
 				}
+
+				m.refreshListFromQueue()
+
 				return m, nil
 			}
 
